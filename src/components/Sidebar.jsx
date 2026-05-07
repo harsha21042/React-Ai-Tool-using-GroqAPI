@@ -1,5 +1,5 @@
 import React from 'react'
-import NewChat from './newChat'
+import NewChat from './NewChat'
 import { useState } from 'react'
 
 const Sidebar = (props) => {
