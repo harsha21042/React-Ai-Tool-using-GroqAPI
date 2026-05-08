@@ -187,10 +187,10 @@ const App = () => {
   }
 
   return (
-    <div className='grid grid-cols-5 min-h-screen overflow-hidden'>
+    <div className='grid grid-cols-5 h-screen overflow-hidden'>
 
       {/* Sidebar */}
-      <div className='col-span-1 bg-zinc-800 px-4 text-white hidden md:block'>
+      <div className='col-span-1 bg-zinc-800 px-4 text-white hidden md:flex'>
           <Sidebar 
           chats={chats} 
           receiveId={receiveId} 
@@ -206,7 +206,7 @@ const App = () => {
       </div>
 
       {/* Main */}
-      <div className='col-span-5 md:col-span-4 flex flex-col h-screen'>
+      <div className='col-span-4 flex flex-col h-screen'>
 
         {/* HEADER */}
         <div className='border-b-2 border-zinc-500 p-2 flex-shrink-0'>
@@ -216,12 +216,12 @@ const App = () => {
         </div>
 
         {/* CHAT AREA */}
-        <div className='flex-1 overflow-y-auto px-4 md:px-20 lg:px-60 py-4'>
+        <div className='flex-1 overflow-y-auto px-60 py-4'>
 
           {/* EMPTY STATE */}
           {(!activeChat || activeChat?.messages?.length === 0) && (
             <div className='flex items-center justify-center h-full'>
-              <h1 className='text-2xl md:text-5xl text-white'>
+              <h1 className='text-5xl text-white'>
                 Where should we begin?
               </h1>
             </div>
@@ -233,7 +233,7 @@ const App = () => {
                 key={index}
                 className={`p-2 ${
                   msg.type === "user"
-                    ? "text-right bg-zinc-800 rounded-2xl w-fit max-w-[90%] md:max-w-[80%] ml-auto break-words"
+                    ? "text-right bg-zinc-800 rounded-2xl w-fit max-w-[80%] ml-auto break-words"
                     : "text-left"
                 }`}
               >
@@ -245,8 +245,8 @@ const App = () => {
         </div>
 
         {/* INPUT */}
-        <div className='px-4 md:px-20 lg:px-60 mb-5'>
-          <div className='flex-shrink-0 bg-zinc-800 w-full p-1 pr-5 text-white m-auto rounded-4xl border border-zinc-700 flex h-14 md:h-16'>
+        <div className='px-60 mb-5'>
+          <div className='flex-shrink-0 bg-zinc-800 w-full p-1 pr-5 text-white m-auto rounded-4xl border border-zinc-700 flex h-16'>
               <input 
               ref={inputRef}
               value={question}
@@ -257,7 +257,7 @@ const App = () => {
               className='w-full h-full p-3 outline-none'
               type="text" placeholder = {apiLoad ? "AI is typing..." : "Ask me Anything"} />
               <button 
-              className='px-4 py-2 rounded-full'
+              className=''
               onClick={askQuestion}
               >Ask</button>
           </div>
