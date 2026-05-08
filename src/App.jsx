@@ -187,7 +187,7 @@ const App = () => {
   }
 
   return (
-    <div className='grid grid-cols-5 min-h-screen overflow-hidden'>
+    <div className='grid grid-cols-5 h-dvh overflow-hidden'>
 
       {/* Sidebar */}
       <div className='col-span-1 bg-zinc-800 px-4 text-white hidden md:block'>
@@ -206,7 +206,7 @@ const App = () => {
       </div>
 
       {/* Main */}
-      <div className='col-span-5 md:col-span-4 flex flex-col min-h-screen overflow-hidden'>
+      <div className='col-span-5 md:col-span-4 flex flex-col h-dvh overflow-hidden'>
 
         {/* HEADER */}
         <div className='border-b-2 border-zinc-500 p-2 flex-shrink-0'>
@@ -216,7 +216,7 @@ const App = () => {
         </div>
 
         {/* CHAT AREA */}
-        <div className='flex-1 overflow-y-auto px-4 md:px-20 lg:px-60 py-4'>
+        <div className='flex-1 overflow-y-auto overflow-x-hidden px-4 md:px-20 lg:px-60 py-4'>
 
           {/* EMPTY STATE */}
           {(!activeChat || activeChat?.messages?.length === 0) && (
