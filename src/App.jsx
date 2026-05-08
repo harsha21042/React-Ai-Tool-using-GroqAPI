@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import Answers from './components/Answers'
 import Sidebar from './components/Sidebar'
+import Loader from './components/Loader'
 
 const App = () => {
   const [question, setQuestion] = React.useState('')
@@ -240,13 +241,19 @@ const App = () => {
                 key={index}
                 className={`p-2 ${
                   msg.type === "user"
-                    ? "text-right bg-zinc-800 rounded-2xl w-fit max-w-[90%] md:max-w-[80%] ml-auto break-words"
+                    ? "bg-zinc-800 rounded-2xl w-fit max-w-[90%] md:max-w-[80%] ml-auto break-words"
                     : "text-left"
                 }`}
               >
                 <Answers text={msg.text} />
               </div>
             ))}
+            {/* Loader */}
+            {apiLoad && (
+              <div className="text-left p-2">
+                <Loader />
+              </div>
+            )}
             <div ref={bottomRef}></div>
           </div>
         </div>
@@ -255,14 +262,15 @@ const App = () => {
         <div className='px-4 md:px-20 lg:px-60 mb-2 md:mb-5'>
           <div className='flex-shrink-0 bg-zinc-800 w-full p-1 pr-5 text-white m-auto rounded-4xl border border-zinc-700 flex h-14 md:h-16'>
               <input 
-              ref={inputRef}
-              value={question}
-              onChange = {(e)=>{
-                setQuestion(e.target.value)
-              }}
-              onKeyDown={handleKeyDown}
-              className='w-full h-full p-3 outline-none'
-              type="text" placeholder = {apiLoad ? "AI is typing..." : "Ask me Anything"} />
+                ref={inputRef}
+                value={question}
+                disabled={apiLoad}
+                onChange = {(e)=>{setQuestion(e.target.value)}}
+                onKeyDown={handleKeyDown}
+                className='w-full h-full p-3 outline-none'
+                type="text" 
+                placeholder = {apiLoad ? "AI is typing..." : "Ask me Anything"}
+               />
               <button 
               className='px-4 py-2 rounded-full'
               onClick={askQuestion}

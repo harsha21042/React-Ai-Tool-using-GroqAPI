@@ -38,7 +38,7 @@ const Sidebar = (props) => {
                   ):(
                     <div 
                     onClick={()=> props.receiveId(chat.id)}
-                    className='py-2 p-2'>
+                    className='py-2 p-2 truncate max-w-[180px]'>
                     {chat.title}
                   </div>
                   )
