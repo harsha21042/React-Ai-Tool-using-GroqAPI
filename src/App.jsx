@@ -18,6 +18,7 @@ const App = () => {
   const [editId, setEditId] = React.useState(null)
   const [inputCurrentState, setInputCurrentState] = React.useState('')
   const editRef = useRef(null)
+  const [showSidebar, setShowSidebar] = React.useState(false)
 
 
   useEffect(() => {
@@ -187,10 +188,10 @@ const App = () => {
   }
 
   return (
-    <div className='grid grid-cols-5 h-dvh overflow-hidden'>
+    <div className='flex h-dvh overflow-hidden'>
 
       {/* Sidebar */}
-      <div className='col-span-1 bg-zinc-800 px-4 text-white hidden md:block'>
+      <div className={`bg-zinc-800 text-white ${showSidebar ? "w-64 opacity-100 px-4" : "w-0 opacity-0 overflow-hidden px-0"} transition-all duration-300`}>
           <Sidebar 
           chats={chats} 
           receiveId={receiveId} 
@@ -206,13 +207,19 @@ const App = () => {
       </div>
 
       {/* Main */}
-      <div className='col-span-5 md:col-span-4 flex flex-col h-dvh overflow-hidden'>
+      <div className='flex-1 flex flex-col h-dvh overflow-hidden'>
 
         {/* HEADER */}
-        <div className='border-b-2 border-zinc-500 p-2 flex-shrink-0'>
-          <h1 className='text-white text-start text-xl font-semibold'>
-            React-AI-Tool
-          </h1>
+        <div className='border-b-2 border-zinc-500 p-2 flex items-center gap-4'>
+            <span 
+              className='cursor-pointer text-2xl text-white'
+              onClick={() => setShowSidebar(!showSidebar)}
+              >
+              ☰
+            </span>
+            <h1 className='text-white text-xl font-semibold'>
+              React-AI-Tool
+            </h1>
         </div>
 
         {/* CHAT AREA */}
