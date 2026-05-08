@@ -190,7 +190,7 @@ const App = () => {
     <div className='grid grid-cols-5 h-screen overflow-hidden'>
 
       {/* Sidebar */}
-      <div className='col-span-1 bg-zinc-800 px-4 text-white hidden md:flex'>
+      <div className='col-span-1 bg-zinc-800 px-4 text-white bg-red-500 md:bg-green-500'>
           <Sidebar 
           chats={chats} 
           receiveId={receiveId} 
