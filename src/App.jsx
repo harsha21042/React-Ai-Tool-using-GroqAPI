@@ -206,7 +206,7 @@ const App = () => {
       </div>
 
       {/* Main */}
-      <div className='col-span-5 md:col-span-4 flex flex-col h-screen'>
+      <div className='col-span-5 md:col-span-4 flex flex-col min-h-screen overflow-hidden'>
 
         {/* HEADER */}
         <div className='border-b-2 border-zinc-500 p-2 flex-shrink-0'>
@@ -245,7 +245,7 @@ const App = () => {
         </div>
 
         {/* INPUT */}
-        <div className='px-4 md:px-20 lg:px-60 mb-5'>
+        <div className='px-4 md:px-20 lg:px-60 mb-2 md:mb-5'>
           <div className='flex-shrink-0 bg-zinc-800 w-full p-1 pr-5 text-white m-auto rounded-4xl border border-zinc-700 flex h-14 md:h-16'>
               <input 
               ref={inputRef}
