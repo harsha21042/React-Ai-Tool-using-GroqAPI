@@ -10,7 +10,7 @@ const Loader = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        if (prevIndex === messageArray.length -1 ){
+        if (prevIndex === messageArray.length-1 ){
             return 0
         }
         return prevIndex + 1
