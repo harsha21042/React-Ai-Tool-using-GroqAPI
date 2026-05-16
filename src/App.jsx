@@ -1,282 +1,94 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
-import Answers from './components/Answers'
 import Sidebar from './components/Sidebar'
-import Loader from './components/Loader'
+import Header from './components/Header'
+import ChatInput from './components/ChatInput'
+import ChatArea from './components/ChatArea'
+import { getAIResponse } from './services/groqApi'
+import useChat from './hooks/useChat'
 
 const App = () => {
-  const [question, setQuestion] = React.useState('')
-  const [messages, setMessages] = React.useState([])
+  const [question, setQuestion] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
-  const [apiLoad, setApiLoad] = React.useState(false)
-  const [chats, setChats] = React.useState(() => {
-  const stored = localStorage.getItem("chats")
-    return stored ? JSON.parse(stored) : []
-  })
-  const [activeChatId, setActiveChatId] = React.useState(null)
-  const activeChat = chats.find((chat) => chat.id === activeChatId)
-  const [editId, setEditId] = React.useState(null)
-  const [inputCurrentState, setInputCurrentState] = React.useState('')
-  const editRef = useRef(null)
-  const [showSidebar, setShowSidebar] = React.useState(false)
+  const [apiLoad, setApiLoad] = useState(false)
 
+  const {
+      chats,
+      deleteChat,
+      activeChatId,
+      receiveId,
+      startNewChat,
+      handleRename,
+      addUserMessage,
+      addBotMessage
+    } = useChat()         
+  
+  const activeChat = chats.find((chat) => chat.id === activeChatId)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-    editRef.current?.
     inputRef.current?.focus()
-  }, [messages, apiLoad])
+  }, [activeChat, apiLoad])
 
-  useEffect(() => {
-    localStorage.setItem("chats", JSON.stringify(chats))
-  }, [chats])
+  
 
   const askQuestion = async () => {
-  if (!question.trim()) return
-
-  const currentQuestion = question
-
-  let newMessage = {
-    type: "user",
-    text: currentQuestion
-  }
-
-  let chatId = activeChatId
-
-  // ✅ 1. HANDLE CHAT CREATION / UPDATE
-  if (activeChatId === null) {
-    let newChat = {
-      id: Date.now(),
-      title: currentQuestion,
-      messages: [newMessage]
-    }
-
-    setChats(prev => [...prev, newChat])
-    setActiveChatId(newChat.id)
-
-    chatId = newChat.id
-  } else {
-    setChats(prev =>
-      prev.map(chat => {
-        if (chat.id === activeChatId) {
-          return {
-            ...chat,
-            messages: [...chat.messages, newMessage]
-          }
-        }
-        return chat
-      })
-    )
-  }
-
-  setQuestion("")
-  setApiLoad(true)
-
-  // ✅ 2. API CALL WITH ERROR HANDLING
-  try {
-    const response = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "openai/gpt-oss-120b",
-          messages: [
-            {
-              role: "user",
-              content: currentQuestion
-            }
-          ]
-        })
+      if (!question.trim()) return
+      const currentQuestion = question
+      const chatId = addUserMessage(currentQuestion);
+      setQuestion("")
+      setApiLoad(true)
+      try {
+        const botAns = await getAIResponse(currentQuestion)
+        addBotMessage(chatId, botAns) 
+      } 
+      catch (error) {
+        console.log("Error:", error)
+        addBotMessage(chatId,"⚠️ Something went wrong. Please try again.")
+      } 
+      finally {
+        setApiLoad(false)
+        inputRef.current?.focus()
       }
-    )
-
-    if (!response.ok) {
-      throw new Error("API request failed")
     }
 
-    let data = await response.json()
-
-    let botAns = data?.choices?.[0]?.message?.content
-
-    if (!botAns) {
-      throw new Error("Invalid AI response")
-    }
-
-    let botMessage = {
-      type: "bot",
-      text: botAns
-    }
-
-    // ✅ 3. ADD BOT MESSAGE TO CHAT
-    setChats(prev =>
-      prev.map(chat => {
-        if (chat.id === chatId) {
-          return {
-            ...chat,
-            messages: [...chat.messages, botMessage]
-          }
-        }
-        return chat
-      })
-    )
-
-  } catch (error) {
-    console.log("Error:", error)
-
-    let errorMessage = {
-      type: "bot",
-      text: "⚠️ Something went wrong. Please try again."
-    }
-
-    setChats(prev =>
-      prev.map(chat => {
-        if (chat.id === chatId) {
-          return {
-            ...chat,
-            messages: [...chat.messages, errorMessage]
-          }
-        }
-        return chat
-      })
-    )
-  } finally {
-    setApiLoad(false)
-    inputRef.current?.focus()
-  }
-}
-
-  const handleKeyDown = (e) =>{
-     if (e.key === "Enter" && question.trim()) 
-      {
+  const handleKeyDown = (e) => {
+     if (e.key === "Enter" && question.trim()) {
         askQuestion()
-      }
-  }
-
-  const receiveId = (id)=>{
-    setActiveChatId(id);
-  }
-
-  const deleteChat = (id)=>{
-    setChats(prev => prev.filter(chats => chats.id !== id ))
-      if(activeChatId === id){
-        setActiveChatId(null)
-      }
-  }
-
-  const startNewChat = ()=>{
-   setActiveChatId(null)
-  }
-
-  const handleRename =(editId,inputCurrentState)=>{
-    setChats(prev => prev.map(chat =>{
-      if(chat.id === editId){
-        return {
-          ...chat,
-          title:inputCurrentState
-        }
-      }
-      else{
-          return chat
-      }
-    } ))
-    setEditId(null);
-    setInputCurrentState('');
+    }
   }
 
   return (
     <div className='flex h-dvh overflow-hidden'>
-
-      {/* Sidebar */}
-      <div className={`bg-zinc-800 text-white ${showSidebar ? "w-64 opacity-100 px-4" : "w-0 opacity-0 overflow-hidden px-0"} transition-all duration-300`}>
+      <div className={`bg-zinc-800 text-white ${showSidebar ? "w-64 opacity-100 p-1" : "w-0 opacity-0 overflow-hidden px-0"} transition-all duration-300`}>
           <Sidebar 
-          chats={chats} 
-          receiveId={receiveId} 
-          deleteChat={deleteChat} 
-          startNewChat={startNewChat} 
-          handleRename={handleRename} 
-          editId={editId}
-          setEditId={setEditId}
-          inputCurrentState={inputCurrentState}
-          setInputCurrentState={setInputCurrentState}
-          editRef={editRef}
+            chats={chats} 
+            receiveId={receiveId} 
+            deleteChat={deleteChat} 
+            startNewChat={startNewChat} 
+            handleRename={handleRename}
         />
       </div>
-
-      {/* Main */}
       <div className='flex-1 flex flex-col h-dvh overflow-hidden'>
-
-        {/* HEADER */}
-        <div className='border-b-2 border-zinc-500 p-2 flex items-center gap-4'>
-            <span
-              className={`cursor-pointer text-2xl text-white transition-transform duration-1200 ease-in-out ${showSidebar ? "rotate-180 scale-110" : "rotate-0"}`}
-              onClick={() => setShowSidebar(!showSidebar)}
-            >
-              ☰
-            </span>
-            <h1 className='text-white text-xl font-semibold'>
-              React-AI-Tool
-            </h1>
-        </div>
-
-        {/* CHAT AREA */}
-        <div className='flex-1 overflow-y-auto overflow-x-hidden px-4 md:px-20 lg:px-60 py-4'>
-
-          {/* EMPTY STATE */}
-          {(!activeChat || activeChat?.messages?.length === 0) && (
-            <div className='flex items-center justify-center h-full'>
-              <h1 className='text-2xl md:text-5xl text-white'>
-                Where should we begin?
-              </h1>
-            </div>
-          )}
-          {/* MESSAGES */}
-          <div className='text-white'>
-            {activeChat?.messages?.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 ${
-                  msg.type === "user"
-                    ? "bg-zinc-800 rounded-2xl w-fit max-w-[90%] md:max-w-[80%] ml-auto break-words"
-                    : "text-left"
-                }`}
-              >
-                <Answers text={msg.text} />
-              </div>
-            ))}
-            {/* Loader */}
-            {apiLoad && (
-              <div className="text-left p-2">
-                <Loader />
-              </div>
-            )}
-            <div ref={bottomRef}></div>
-          </div>
-        </div>
-
-        {/* INPUT */}
-        <div className='px-4 md:px-20 lg:px-60 mb-2 md:mb-5'>
-          <div className='flex-shrink-0 bg-zinc-800 w-full p-1 pr-5 text-white m-auto rounded-4xl border border-zinc-700 flex h-14 md:h-16'>
-              <input 
-                ref={inputRef}
-                value={question}
-                disabled={apiLoad}
-                onChange = {(e)=>{setQuestion(e.target.value)}}
-                onKeyDown={handleKeyDown}
-                className='w-full h-full p-3 outline-none'
-                type="text" 
-                placeholder = {apiLoad ? "AI is typing..." : "Ask me Anything"}
-               />
-              <button 
-              className='px-4 py-2 rounded-full'
-              onClick={askQuestion}
-              >Ask</button>
-          </div>
-        </div>
+        <Header 
+          showSidebar={showSidebar}
+          setShowSidebar={setShowSidebar}
+        />
+        <ChatArea 
+          activeChat = {activeChat}
+          apiLoad = {apiLoad}
+          bottomRef = {bottomRef}
+        />
+        <ChatInput 
+          question = {question}
+          setQuestion = {setQuestion}
+          apiLoad = {apiLoad}
+          handleKeyDown= {handleKeyDown}
+          askQuestion = {askQuestion}
+          inputRef = {inputRef}
+        />
       </div>
     </div>
   )
