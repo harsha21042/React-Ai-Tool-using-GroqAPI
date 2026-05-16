@@ -1,10 +1,16 @@
 import React from 'react'
 import NewChat from './NewChat'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const Sidebar = (props) => {
 
+  const [editId, setEditId] = useState(null)
+  const [inputCurrentState, setInputCurrentState] = useState('')
+  const editRef = useRef(null)
 
+  useEffect(() => {
+    editRef.current?.focus()
+  }, [editId])
 
   return (
     <div className=''>
@@ -21,18 +27,20 @@ const Sidebar = (props) => {
               key={chat.id}
               className='flex items-center justify-between hover:bg-zinc-600 rounded-lg cursor-pointer'>
                 { 
-                  props.editId === chat.id ? 
+                  editId === chat.id ? 
                   ( <input 
-                    ref={props.editRef}
+                    ref={editRef}
                     type="text"
-                    value={props.inputCurrentState}
+                    value={inputCurrentState}
                     onKeyDown={(e) =>{
                       if (e.key ==='Enter'){
-                      props.handleRename(chat.id,props.inputCurrentState)
+                      props.handleRename(chat.id,inputCurrentState)
+                      setEditId(null)
+                      setInputCurrentState('')
                     }
                   }}
                     onChange={(e)=>{
-                      props.setInputCurrentState(e.target.value)
+                      setInputCurrentState(e.target.value)
                     }}
                     className='py-2 p-2 w-full' />
                   ):(
@@ -46,10 +54,10 @@ const Sidebar = (props) => {
                 <div className='flex justify-self-end gap-2'>
                 <div
                   onClick={()=> {
-                  props.setEditId(chat.id)
-                  props.setInputCurrentState(chat.title)
+                  setEditId(chat.id)
+                  setInputCurrentState(chat.title)
                   setTimeout(() => {
-                  props.editRef.current?.focus()
+                  editRef.current?.focus()
                    }, 0)
                 }}> ✏️
               </div>
