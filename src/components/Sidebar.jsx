@@ -13,14 +13,14 @@ const Sidebar = (props) => {
   }, [editId])
 
   return (
-    <div className=''>
+    <div className='flex flex-col h-screen'>
         <div className='border-b-2 border-zinc-500 p-2 flex-shrink-0'>
           <h1 className='text-start text-xl font-semibold'>
             Recent Search History
           </h1>
         </div>
         <NewChat startNewChat={props.startNewChat} />
-        <div>
+        <div className='flex-1 overflow-y-auto min-h-0'>
           {
             props.chats.map((chat,index)=>(
             <div 
