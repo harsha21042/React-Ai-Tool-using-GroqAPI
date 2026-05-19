@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 
 const Loader = () => {
-  const messageArray = ["AI is thinking…","Generating response…","Almost there…"]
+  const messageArray: string[] = ["AI is thinking…","Generating response…","Almost there…"]
   const [currentIndex, setCurrentIndex] = useState<number>(0)
   const currentMessage = messageArray[currentIndex]
 

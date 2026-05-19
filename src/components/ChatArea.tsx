@@ -10,7 +10,7 @@ type Chat = {
   messages: Message[]
 }
 type ChatAreaProps = {
-  activeChat : Chat | undefined
+  activeChat? : Chat 
   apiLoad : boolean
   bottomRef : React.RefObject<HTMLDivElement | null>
 }

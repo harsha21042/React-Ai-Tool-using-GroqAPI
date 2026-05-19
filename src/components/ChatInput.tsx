@@ -19,7 +19,7 @@ const ChatInput = ({inputRef, question, apiLoad, setQuestion, handleKeyDown, ask
                 ref={inputRef}
                 value={question}
                 disabled={apiLoad}
-                onChange = {(e)=>{setQuestion(e.target.value)}}
+                onChange = {(e:React.ChangeEvent<HTMLInputElement>)=>{setQuestion(e.target.value)}}
                 onKeyDown={handleKeyDown}
                 className='w-full h-full p-3 outline-none'
                 type="text" 

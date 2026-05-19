@@ -18,9 +18,9 @@ type SidebarProps = {
 const Sidebar = ({startNewChat,chats,handleRename,receiveId,deleteChat} : SidebarProps) => {
 
   const [editId, setEditId] = useState<number | null>(null)
-  const [inputCurrentState, setInputCurrentState] = useState('')
+  const [inputCurrentState, setInputCurrentState] = useState<string>('')
   const editRef = useRef<HTMLInputElement | null>(null)
-  
+
   useEffect(() => {
     editRef.current?.focus()
   }, [editId])
@@ -45,14 +45,14 @@ const Sidebar = ({startNewChat,chats,handleRename,receiveId,deleteChat} : Sideba
                     ref={editRef}
                     type="text"
                     value={inputCurrentState}
-                    onKeyDown={(e) =>{
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>{
                       if (e.key ==='Enter'){
                       handleRename(chat.id,inputCurrentState)
                       setEditId(null)
                       setInputCurrentState('')
                     }
                   }}
-                    onChange={(e)=>{
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{
                       setInputCurrentState(e.target.value)
                     }}
                     className='py-2 p-2 w-full' />
