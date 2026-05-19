@@ -2,7 +2,7 @@ import React from 'react'
 import Answers from './Answers'
 
 type Message = {
-  type: string,
+  type: "user" | "bot",
   text: string
 }
 type MessageBubbleProps = {

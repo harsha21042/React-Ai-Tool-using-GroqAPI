@@ -62,7 +62,7 @@ const useChat = () => {
          let chatId : number
          chatId = activeChatId!
          if (activeChatId === null) {
-            let newChat = {
+            const newChat: Chat = {
               id: Date.now(),
               title: currentQuestion,
               messages: [newMessage]
