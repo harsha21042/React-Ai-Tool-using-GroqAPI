@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 const Loader = () => {
   const messageArray = ["AI is thinking…","Generating response…","Almost there…"]
-  const [currentIndex, setCurrentIndex] = React.useState(0)
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
   const currentMessage = messageArray[currentIndex]
 
 

@@ -2,11 +2,20 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 
 
+type Message = {
+  type : "user" | "bot",
+  text : string
+}
+type Chat ={
+  id : number,
+  title : string,
+  messages : Message[]
+}
 const useChat = () => {
 
-    const [activeChatId, setActiveChatId] = React.useState(null)
+    const [activeChatId, setActiveChatId] = useState<number | null>(null)
     
-    const [chats, setChats] = React.useState(() => {
+    const [chats, setChats] = useState<Chat[]>(() => {
         const stored = localStorage.getItem("chats")
         return stored ? JSON.parse(stored) : []
       })
@@ -15,14 +24,14 @@ const useChat = () => {
         localStorage.setItem("chats", JSON.stringify(chats))
     }, [chats])
 
-    const deleteChat = (id)=>{
+    const deleteChat = (id : number)=>{
         setChats(prev => prev.filter(chats => chats.id !== id ))
         if(activeChatId === id){
             setActiveChatId(null)
         }
     }
 
-    const receiveId = (id)=>{
+    const receiveId = (id : number)=>{
         setActiveChatId(id);
     }
 
@@ -30,7 +39,7 @@ const useChat = () => {
         setActiveChatId(null)
     }
 
-    const handleRename =(editId,inputCurrentState)=>{
+    const handleRename =(editId : number,inputCurrentState : string)=>{
         setChats(prev => prev.map(chat =>{
         if(chat.id === editId){
             return {
@@ -44,13 +53,14 @@ const useChat = () => {
         } ))
     }
 
-    const addUserMessage =(currentQuestion)=>{
-            let newMessage = {
+    const addUserMessage =(currentQuestion: string)=>{
+            let newMessage: Message = {
                 type: "user",
                 text: currentQuestion
             }
 
-         let chatId = activeChatId
+         let chatId : number
+         chatId = activeChatId!
          if (activeChatId === null) {
             let newChat = {
               id: Date.now(),
@@ -78,8 +88,8 @@ const useChat = () => {
        return chatId 
     }
 
-    const addBotMessage = (chatId,botAns)=>{
-        let botMessage = {
+    const addBotMessage = (chatId:number,botAns:string)=>{
+        let botMessage: Message = {
         type: "bot",
         text: botAns
       }

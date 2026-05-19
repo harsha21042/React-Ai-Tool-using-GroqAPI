@@ -2,12 +2,25 @@ import React from 'react'
 import NewChat from './NewChat'
 import { useState, useEffect, useRef } from 'react'
 
-const Sidebar = (props) => {
 
-  const [editId, setEditId] = useState(null)
+type Chat ={
+  id : number,
+  title : string,
+}
+type SidebarProps = {
+  startNewChat : () => void
+  chats : Chat[],
+  handleRename : (id:number, inputCurrentState:string) => void,
+  receiveId : (id:number) => void,
+  deleteChat : (id:number) => void
+}
+
+const Sidebar = ({startNewChat,chats,handleRename,receiveId,deleteChat} : SidebarProps) => {
+
+  const [editId, setEditId] = useState<number | null>(null)
   const [inputCurrentState, setInputCurrentState] = useState('')
-  const editRef = useRef(null)
-
+  const editRef = useRef<HTMLInputElement | null>(null)
+  
   useEffect(() => {
     editRef.current?.focus()
   }, [editId])
@@ -19,10 +32,10 @@ const Sidebar = (props) => {
             Recent Search History
           </h1>
         </div>
-        <NewChat startNewChat={props.startNewChat} />
+        <NewChat startNewChat={startNewChat} />
         <div className='flex-1 overflow-y-auto min-h-0'>
           {
-            props.chats.map((chat,index)=>(
+            chats.map((chat,index)=>(
             <div 
               key={chat.id}
               className='flex items-center justify-between hover:bg-zinc-600 rounded-lg cursor-pointer'>
@@ -34,7 +47,7 @@ const Sidebar = (props) => {
                     value={inputCurrentState}
                     onKeyDown={(e) =>{
                       if (e.key ==='Enter'){
-                      props.handleRename(chat.id,inputCurrentState)
+                      handleRename(chat.id,inputCurrentState)
                       setEditId(null)
                       setInputCurrentState('')
                     }
@@ -45,7 +58,7 @@ const Sidebar = (props) => {
                     className='py-2 p-2 w-full' />
                   ):(
                     <div 
-                    onClick={()=> props.receiveId(chat.id)}
+                    onClick={()=> receiveId(chat.id)}
                     className='py-2 p-2 truncate max-w-[180px]'>
                     {chat.title}
                   </div>
@@ -61,7 +74,7 @@ const Sidebar = (props) => {
                    }, 0)
                 }}> ✏️
               </div>
-              <div onClick={()=> props.deleteChat(chat.id) }> 🗑</div>
+              <div onClick={()=> deleteChat(chat.id) }> 🗑</div>
             </div>
             </div>
             ))

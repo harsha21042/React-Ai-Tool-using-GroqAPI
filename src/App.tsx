@@ -9,8 +9,8 @@ import useChat from './hooks/useChat'
 
 const App = () => {
   const [question, setQuestion] = useState('')
-  const bottomRef = useRef(null)
-  const inputRef = useRef(null)
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const [apiLoad, setApiLoad] = useState(false)
 
   const {
@@ -52,9 +52,9 @@ const App = () => {
         setApiLoad(false)
         inputRef.current?.focus()
       }
-    }
+   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
      if (e.key === "Enter" && question.trim()) {
         askQuestion()
     }
